@@ -178,8 +178,21 @@ public final class Utils {
    * @return the hex string representation of the digest
    */
   public static String sha256(byte[] data) {
+    return digest("SHA-256", data);
+  }
+
+  /**
+   * Computes the SHA-1 digest of a byte array.
+   * @param data the data to be hashed
+   * @return the hex string representation of the digest
+   */
+  public static String sha1(byte[] data) {
+    return digest("SHA-1", data);
+  }
+
+  private static String digest(String algorithm, byte[] data) {
     try {
-      var digest = MessageDigest.getInstance("SHA-256");
+      var digest = MessageDigest.getInstance(algorithm);
       byte[] hash = digest.digest(data);
       var sb = new StringBuilder();
       for (byte b : hash) {

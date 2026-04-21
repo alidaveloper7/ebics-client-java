@@ -51,18 +51,30 @@ public class HPBRequestElement extends DefaultEbicsRootElement {
   public void build() throws EbicsException {
     log.info("[DEBUG-LOG] Building HPB Request");
     var user = session.getUser();
-    log.info("[DEBUG-LOG] Used Private Keys for HPB:");
+    log.info("[DEBUG-LOG] Used Keys for HPB:");
     if (user.getA005PrivateKey() != null) {
         log.info("[DEBUG-LOG] Private Key A (PEM):\n{}", Utils.formatPEM("PRIVATE KEY", user.getA005PrivateKey().getEncoded()));
+        log.info("[DEBUG-LOG] Public Key A (PEM):\n{}", Utils.formatPEM("PUBLIC KEY", user.getA005PublicKey().getEncoded()));
+        log.info("[DEBUG-LOG] Certificate A (PEM):\n{}", Utils.formatPEM("CERTIFICATE", user.getA005Certificate()));
         log.info("[DEBUG-LOG] SHA-256 Cert A: {}", Utils.sha256(user.getA005Certificate()));
+        log.info("[DEBUG-LOG] SHA-1 Cert A: {}", Utils.sha1(user.getA005Certificate()));
+        log.info("[DEBUG-LOG] PKCS1 SHA-256 A (Pub Key): {}", Utils.sha256(user.getA005PublicKey().getEncoded()));
     }
     if (user.getX002PrivateKey() != null) {
         log.info("[DEBUG-LOG] Private Key X (PEM):\n{}", Utils.formatPEM("PRIVATE KEY", user.getX002PrivateKey().getEncoded()));
+        log.info("[DEBUG-LOG] Public Key X (PEM):\n{}", Utils.formatPEM("PUBLIC KEY", user.getX002PublicKey().getEncoded()));
+        log.info("[DEBUG-LOG] Certificate X (PEM):\n{}", Utils.formatPEM("CERTIFICATE", user.getX002Certificate()));
         log.info("[DEBUG-LOG] SHA-256 Cert X: {}", Utils.sha256(user.getX002Certificate()));
+        log.info("[DEBUG-LOG] SHA-1 Cert X: {}", Utils.sha1(user.getX002Certificate()));
+        log.info("[DEBUG-LOG] PKCS1 SHA-256 X (Pub Key): {}", Utils.sha256(user.getX002PublicKey().getEncoded()));
     }
     if (user.getE002PrivateKey() != null) {
         log.info("[DEBUG-LOG] Private Key E (PEM):\n{}", Utils.formatPEM("PRIVATE KEY", user.getE002PrivateKey().getEncoded()));
+        log.info("[DEBUG-LOG] Public Key E (PEM):\n{}", Utils.formatPEM("PUBLIC KEY", user.getE002PublicKey().getEncoded()));
+        log.info("[DEBUG-LOG] Certificate E (PEM):\n{}", Utils.formatPEM("CERTIFICATE", user.getE002Certificate()));
         log.info("[DEBUG-LOG] SHA-256 Cert E: {}", Utils.sha256(user.getE002Certificate()));
+        log.info("[DEBUG-LOG] SHA-1 Cert E: {}", Utils.sha1(user.getE002Certificate()));
+        log.info("[DEBUG-LOG] PKCS1 SHA-256 E (Pub Key): {}", Utils.sha256(user.getE002PublicKey().getEncoded()));
     }
 
     noPubKeyDigestsRequest = new NoPubKeyDigestsRequestElement(session);
