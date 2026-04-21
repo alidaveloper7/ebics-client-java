@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import org.kopi.ebics.exception.EbicsException;
 import org.kopi.ebics.session.EbicsSession;
+import org.kopi.ebics.utils.Utils;
 
 /**
  * The <code>HPBRequestElement</code> is the element to be sent when
@@ -49,6 +50,21 @@ public class HPBRequestElement extends DefaultEbicsRootElement {
   @Override
   public void build() throws EbicsException {
     log.info("[DEBUG-LOG] Building HPB Request");
+    var user = session.getUser();
+    log.info("[DEBUG-LOG] Used Private Keys for HPB:");
+    if (user.getA005PrivateKey() != null) {
+        log.info("[DEBUG-LOG] Private Key A (PEM):\n{}", Utils.formatPEM("PRIVATE KEY", user.getA005PrivateKey().getEncoded()));
+        log.info("[DEBUG-LOG] SHA-256 Cert A: {}", Utils.sha256(user.getA005Certificate()));
+    }
+    if (user.getX002PrivateKey() != null) {
+        log.info("[DEBUG-LOG] Private Key X (PEM):\n{}", Utils.formatPEM("PRIVATE KEY", user.getX002PrivateKey().getEncoded()));
+        log.info("[DEBUG-LOG] SHA-256 Cert X: {}", Utils.sha256(user.getX002Certificate()));
+    }
+    if (user.getE002PrivateKey() != null) {
+        log.info("[DEBUG-LOG] Private Key E (PEM):\n{}", Utils.formatPEM("PRIVATE KEY", user.getE002PrivateKey().getEncoded()));
+        log.info("[DEBUG-LOG] SHA-256 Cert E: {}", Utils.sha256(user.getE002Certificate()));
+    }
+
     noPubKeyDigestsRequest = new NoPubKeyDigestsRequestElement(session);
     noPubKeyDigestsRequest.build();
     var signedInfo = new SignedInfo(session.getUser(), noPubKeyDigestsRequest.getDigest());

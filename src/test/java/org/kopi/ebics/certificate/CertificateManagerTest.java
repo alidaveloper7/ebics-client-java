@@ -156,6 +156,21 @@ class CertificateManagerTest {
             }
 
             @Override
+            public PrivateKey getA005PrivateKey() {
+                return null;
+            }
+
+            @Override
+            public PrivateKey getX002PrivateKey() {
+                return null;
+            }
+
+            @Override
+            public PrivateKey getE002PrivateKey() {
+                return null;
+            }
+
+            @Override
             public String getSecurityMedium() {
                 return "";
             }

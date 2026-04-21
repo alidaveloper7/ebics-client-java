@@ -110,6 +110,24 @@ public interface EbicsUser {
   void setE002PrivateKey(PrivateKey e002Key);
 
   /**
+   * Returns the signature private key
+   * @return the signature private key
+   */
+  PrivateKey getA005PrivateKey();
+
+  /**
+   * Returns the authentication private key
+   * @return the authentication private key
+   */
+  PrivateKey getX002PrivateKey();
+
+  /**
+   * Returns the encryption private key
+   * @return the encryption private key
+   */
+  PrivateKey getE002PrivateKey();
+
+  /**
    * Returns the type to security medium used to store the A005 key.
    * @return the type to security medium used to store the A005 key.
    */

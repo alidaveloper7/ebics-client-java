@@ -22,8 +22,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.text.ParseException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -148,6 +152,43 @@ public final class Utils {
     byte[] data = new byte[n];
     secureRandom.nextBytes(data);
     return data;
+  }
+
+  /**
+   * Formats a byte array as a PEM string.
+   * @param type the PEM type (e.g., "PRIVATE KEY", "CERTIFICATE")
+   * @param data the data to be formatted
+   * @return the PEM string
+   */
+  public static String formatPEM(String type, byte[] data) {
+    var sb = new StringBuilder();
+    sb.append("-----BEGIN ").append(type).append("-----\n");
+    String base64 = Base64.getMimeEncoder(64, new byte[]{'\n'}).encodeToString(data);
+    sb.append(base64);
+    if (!base64.endsWith("\n")) {
+        sb.append("\n");
+    }
+    sb.append("-----END ").append(type).append("-----\n");
+    return sb.toString();
+  }
+
+  /**
+   * Computes the SHA-256 digest of a byte array.
+   * @param data the data to be hashed
+   * @return the hex string representation of the digest
+   */
+  public static String sha256(byte[] data) {
+    try {
+      var digest = MessageDigest.getInstance("SHA-256");
+      byte[] hash = digest.digest(data);
+      var sb = new StringBuilder();
+      for (byte b : hash) {
+        sb.append(String.format("%02x", b));
+      }
+      return sb.toString();
+    } catch (NoSuchAlgorithmException e) {
+      return null;
+    }
   }
 
   /**

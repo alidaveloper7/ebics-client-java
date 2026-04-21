@@ -388,6 +388,21 @@ public class User implements EbicsUser, Savable {
   }
 
   @Override
+  public PrivateKey getA005PrivateKey() {
+    return a005PrivateKey;
+  }
+
+  @Override
+  public PrivateKey getX002PrivateKey() {
+    return x002PrivateKey;
+  }
+
+  @Override
+  public PrivateKey getE002PrivateKey() {
+    return e002PrivateKey;
+  }
+
+  @Override
   public String getSecurityMedium() {
     return "0000";
   }
