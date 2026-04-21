@@ -26,6 +26,9 @@ import java.util.Calendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.kopi.ebics.client.EbicsUploadParams;
 import org.kopi.ebics.exception.EbicsException;
 import org.kopi.ebics.interfaces.ContentFactory;
@@ -58,6 +61,7 @@ import org.kopi.ebics.utils.Utils;
  *
  */
 public class UploadInitializationRequestElement extends InitializationRequestElement {
+    private static final Logger log = LoggerFactory.getLogger(UploadInitializationRequestElement.class);
 
 
 /**
@@ -125,8 +129,10 @@ public class UploadInitializationRequestElement extends InitializationRequestEle
             session.getConfiguration().getEncryptionVersion(),
             "http://www.w3.org/2001/04/xmlenc#sha256",
             decodeHex(session.getUser().getPartner().getBank().getE002Digest()));
+        byte[] userSignatureXml = userSignature.prettyPrint();
+        log.info("[DEBUG-LOG] Upload Request User Signature:\n{}", new String(userSignatureXml));
         var signatureData = EbicsXmlFactory.createSignatureData(true,
-            Utils.encrypt(Utils.zip(userSignature.prettyPrint()), keySpec));
+            Utils.encrypt(Utils.zip(userSignatureXml), keySpec));
         var dataEncryptionInfo = EbicsXmlFactory.createDataEncryptionInfo(true,
             encryptionPubKeyDigest, generateTransactionKey());
 

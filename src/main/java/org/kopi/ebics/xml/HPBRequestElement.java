@@ -18,6 +18,9 @@
 
 package org.kopi.ebics.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.kopi.ebics.exception.EbicsException;
 import org.kopi.ebics.session.EbicsSession;
 
@@ -28,6 +31,7 @@ import org.kopi.ebics.session.EbicsSession;
  *
  */
 public class HPBRequestElement extends DefaultEbicsRootElement {
+    private static final Logger log = LoggerFactory.getLogger(HPBRequestElement.class);
 
   /**
    * Constructs a new HPB Request element.
@@ -44,6 +48,7 @@ public class HPBRequestElement extends DefaultEbicsRootElement {
 
   @Override
   public void build() throws EbicsException {
+    log.info("[DEBUG-LOG] Building HPB Request");
     noPubKeyDigestsRequest = new NoPubKeyDigestsRequestElement(session);
     noPubKeyDigestsRequest.build();
     var signedInfo = new SignedInfo(session.getUser(), noPubKeyDigestsRequest.getDigest());

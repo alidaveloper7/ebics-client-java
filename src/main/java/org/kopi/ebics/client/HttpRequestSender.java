@@ -36,6 +36,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.kopi.ebics.interfaces.Configuration;
 import org.kopi.ebics.interfaces.ContentFactory;
 import org.kopi.ebics.io.ByteArrayContentFactory;
@@ -47,6 +50,7 @@ import org.kopi.ebics.session.EbicsSession;
  *
  */
 public class HttpRequestSender {
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestSender.class);
 
     private final EbicsSession session;
     private ContentFactory response;
@@ -107,12 +111,15 @@ public class HttpRequestSender {
             session.getUser().getPartner().getBank().getURL().toString());
 
         HttpEntity requestEntity = EntityBuilder.create().setStream(input).build();
-        method.setEntity(requestEntity);
+        byte[] requestData = EntityUtils.toByteArray(requestEntity);
+        log.info("[DEBUG-LOG] Sending EBICS Request:\n{}", new String(requestData));
+        method.setEntity(EntityBuilder.create().setBinary(requestData).build());
         method.setHeader(HttpHeaders.CONTENT_TYPE, "text/xml; charset=ISO-8859-1");
 
         try (CloseableHttpResponse response = httpClient.execute(method)) {
-            this.response = new ByteArrayContentFactory(
-                EntityUtils.toByteArray(response.getEntity()));
+            byte[] responseData = EntityUtils.toByteArray(response.getEntity());
+            log.info("[DEBUG-LOG] Received EBICS Response (HTTP {}):\n{}", response.getStatusLine().getStatusCode(), new String(responseData));
+            this.response = new ByteArrayContentFactory(responseData);
             return response.getStatusLine().getStatusCode();
         }
     }

@@ -18,6 +18,9 @@
 
 package org.kopi.ebics.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.kopi.ebics.exception.EbicsException;
 import org.kopi.ebics.session.EbicsSession;
 import org.kopi.ebics.session.OrderType;
@@ -30,6 +33,7 @@ import org.kopi.ebics.utils.Utils;
  *
  */
 public class INIRequestElement extends DefaultEbicsRootElement {
+    private static final Logger log = LoggerFactory.getLogger(INIRequestElement.class);
 
   /**
    * Constructs a new INI request element.
@@ -50,9 +54,11 @@ public class INIRequestElement extends DefaultEbicsRootElement {
     public void build() throws EbicsException {
         var signaturePubKey = new SignaturePubKeyOrderDataElement(session);
         signaturePubKey.build();
+        byte[] orderDataXml = signaturePubKey.prettyPrint();
+        log.info("[DEBUG-LOG] INI Request Order Data (SignaturePubKeyOrderData):\n{}", new String(orderDataXml));
         unsecuredRequest = new UnsecuredRequestElement(session, OrderType.INI,
             orderId == null ? session.getUser().getPartner().nextOrderId() : orderId,
-            Utils.zip(signaturePubKey.prettyPrint()));
+            Utils.zip(orderDataXml));
         unsecuredRequest.build();
         unsecuredRequest.addNamespaceDecl("ds", "http://www.w3.org/2000/09/xmldsig#");
         unsecuredRequest.setSaveSuggestedPrefixes("urn:org:ebics:H005", "");

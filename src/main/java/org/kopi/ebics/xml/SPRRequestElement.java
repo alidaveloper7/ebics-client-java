@@ -20,6 +20,9 @@ package org.kopi.ebics.xml;
 
 import java.util.Calendar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.kopi.ebics.exception.EbicsException;
 import org.kopi.ebics.schema.h005.DataEncryptionInfoType.EncryptionPubKeyDigest;
 import org.kopi.ebics.schema.h005.DataTransferRequestType;
@@ -49,6 +52,7 @@ import org.kopi.ebics.utils.Utils;
  *
  */
 public class SPRRequestElement extends InitializationRequestElement {
+    private static final Logger log = LoggerFactory.getLogger(SPRRequestElement.class);
 
   /**
    * Constructs a new SPR request element.
@@ -114,7 +118,9 @@ public class SPRRequestElement extends InitializationRequestElement {
     encryptionPubKeyDigest = EbicsXmlFactory.createEncryptionPubKeyDigest(session.getConfiguration().getEncryptionVersion(),
 								          "http://www.w3.org/2001/04/xmlenc#sha256",
 								          decodeHex(session.getUser().getPartner().getBank().getE002Digest()));
-    signatureData = EbicsXmlFactory.createSignatureData(true, Utils.encrypt(Utils.zip(userSignature.prettyPrint()), keySpec));
+    byte[] userSignatureXml = userSignature.prettyPrint();
+    log.info("[DEBUG-LOG] SPR Request User Signature:\n{}", new String(userSignatureXml));
+    signatureData = EbicsXmlFactory.createSignatureData(true, Utils.encrypt(Utils.zip(userSignatureXml), keySpec));
     dataEncryptionInfo = EbicsXmlFactory.createDataEncryptionInfo(true,
 	                                                          encryptionPubKeyDigest,
 	                                                          generateTransactionKey());

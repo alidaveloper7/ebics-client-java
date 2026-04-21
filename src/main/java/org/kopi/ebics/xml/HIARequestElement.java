@@ -18,6 +18,9 @@
 
 package org.kopi.ebics.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.kopi.ebics.exception.EbicsException;
 import org.kopi.ebics.session.EbicsSession;
 import org.kopi.ebics.session.OrderType;
@@ -31,6 +34,7 @@ import org.kopi.ebics.utils.Utils;
  *
  */
 public class HIARequestElement extends DefaultEbicsRootElement {
+    private static final Logger log = LoggerFactory.getLogger(HIARequestElement.class);
 
   /**
    * Constructs a new HIA Request root element
@@ -52,9 +56,11 @@ public class HIARequestElement extends DefaultEbicsRootElement {
 
       var requestOrderData = new HIARequestOrderDataElement(session);
       requestOrderData.build();
+      byte[] orderDataXml = requestOrderData.prettyPrint();
+      log.info("[DEBUG-LOG] HIA Request Order Data (HIARequestOrderData):\n{}", new String(orderDataXml));
       unsecuredRequest = new UnsecuredRequestElement(session, OrderType.HIA,
           orderId == null ? session.getUser().getPartner().nextOrderId() : orderId,
-          Utils.zip(requestOrderData.prettyPrint()));
+          Utils.zip(orderDataXml));
       unsecuredRequest.setSaveSuggestedPrefixes("urn:org:ebics:H005", "");
       unsecuredRequest.build();
   }

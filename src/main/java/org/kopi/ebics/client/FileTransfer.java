@@ -102,7 +102,7 @@ public class FileTransfer {
     session.getConfiguration().getTraceManager().trace(initializer);
     int httpCode = sender.send(new ByteArrayContentFactory(initializer.prettyPrint()));
 
-    Utils.checkHttpCode(httpCode);
+    Utils.checkHttpCode(httpCode, sender.getResponseBody());
     InitializationResponseElement response = new InitializationResponseElement(sender.getResponseBody(),
 	                                         orderType,
 	                                         DefaultEbicsRootElement.generateName(orderType));
@@ -153,7 +153,7 @@ public class FileTransfer {
     uploader.validate();
     session.getConfiguration().getTraceManager().trace(uploader);
     httpCode = sender.send(new ByteArrayContentFactory(uploader.prettyPrint()));
-    Utils.checkHttpCode(httpCode);
+    Utils.checkHttpCode(httpCode, sender.getResponseBody());
     response = new TransferResponseElement(sender.getResponseBody(),
 	                                   DefaultEbicsRootElement.generateName(orderType));
     response.build();
@@ -182,7 +182,7 @@ public class FileTransfer {
     session.getConfiguration().getTraceManager().trace(initializer);
     var request = initializer.prettyPrint();
     var httpCode = sender.send(new ByteArrayContentFactory(request));
-    Utils.checkHttpCode(httpCode);
+    Utils.checkHttpCode(httpCode, sender.getResponseBody());
     var response = new DownloadInitializationResponseElement(sender.getResponseBody(),
 	                                          orderType,
 	                                          DefaultEbicsRootElement.generateName(orderType));
@@ -213,7 +213,7 @@ public class FileTransfer {
     receipt.validate();
     session.getConfiguration().getTraceManager().trace(receipt);
     httpCode = sender.send(new ByteArrayContentFactory(receipt.prettyPrint()));
-    Utils.checkHttpCode(httpCode);
+    Utils.checkHttpCode(httpCode, sender.getResponseBody());
     var receiptResponse = new ReceiptResponseElement(sender.getResponseBody(),
 	                                         DefaultEbicsRootElement.generateName(orderType));
     receiptResponse.build();
@@ -253,7 +253,7 @@ public class FileTransfer {
     downloader.validate();
     session.getConfiguration().getTraceManager().trace(downloader);
     httpCode = sender.send(new ByteArrayContentFactory(downloader.prettyPrint()));
-    Utils.checkHttpCode(httpCode);
+    Utils.checkHttpCode(httpCode, sender.getResponseBody());
     response = new DownloadTransferResponseElement(sender.getResponseBody(),
 	                                    orderType,
 	                                    DefaultEbicsRootElement.generateName(orderType));

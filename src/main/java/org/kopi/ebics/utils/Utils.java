@@ -40,6 +40,7 @@ import org.apache.xml.security.c14n.Canonicalizer;
 import org.apache.xml.security.utils.IgnoreAllErrorHandler;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kopi.ebics.exception.EbicsException;
+import org.kopi.ebics.interfaces.ContentFactory;
 import org.kopi.ebics.messages.Messages;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -125,6 +126,22 @@ public final class Utils {
 
   public static byte[] generateKey() {
     return nextRandomBytes(16);
+  }
+
+  /**
+   * Reads from input stream into byte array.
+   * @param input the input stream
+   * @return the read bytes
+   * @throws IOException
+   */
+  public static byte[] read(java.io.InputStream input) throws IOException {
+    var output = new ByteArrayOutputStream();
+    byte[] buffer = new byte[1024];
+    int length;
+    while ((length = input.read(buffer)) != -1) {
+      output.write(buffer, 0, length);
+    }
+    return output.toByteArray();
   }
 
   private static byte[] nextRandomBytes(int n) {
@@ -306,12 +323,21 @@ public final class Utils {
   /**
    * Checks for the returned http code
    * @param httpCode the http code
+   * @param response the response body
    * @throws EbicsException
    */
-  public static void checkHttpCode(int httpCode) throws EbicsException {
+  public static void checkHttpCode(int httpCode, ContentFactory response) throws EbicsException {
     if (httpCode != 200) {
       Messages messages = new Messages(Constants.APPLICATION_BUNDLE_NAME);
-      throw new EbicsException(messages.getString("http.code.error", httpCode));
+      String body = "";
+      if (response != null) {
+          try {
+              body = "\nResponse body: " + new String(Utils.read(response.getContent()));
+          } catch (Exception e) {
+              // ignore
+          }
+      }
+      throw new EbicsException(messages.getString("http.code.error", httpCode) + body);
     }
   }
 }
